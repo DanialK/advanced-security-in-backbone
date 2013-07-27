@@ -1,0 +1,16 @@
+<div class="hero-unit">
+	<h1>Home Page</h1>
+	<% if(user){
+		%>
+			<h4>Hello <%= user.firstName %> <%= user.lastName %> </h4>
+
+			<a href="#profile">Profile</a>
+			<br>
+			<a class="logout">Log out</a>
+		<%
+	}else{
+		%>
+			<a href="#login">Log In</a>
+		<%
+	}%>
+</div>
