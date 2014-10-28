@@ -1,8 +1,9 @@
-define([
-	'core/BaseView',
-	'Session',
-	'text!templates/homeTemplate.html'
-], function(BaseView, Session, homeTemplate){
+define(function(require, exports, module) {
+
+  	"use strict";
+  	var Session = require("session");
+  	var BaseView = require("BaseView");
+  	var homeTemplate = require("text!templates/homeTemplate.html");
 
 	var HomeView = BaseView.extend({
 
@@ -28,6 +29,6 @@ define([
 		}
 	});
 
-	return HomeView;
+	module.exports = HomeView;
 
 });

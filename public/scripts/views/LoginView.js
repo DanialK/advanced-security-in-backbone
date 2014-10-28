@@ -1,14 +1,15 @@
-define([
-	'jquery',
-	'core/BaseView',
-	'Session',
-	'text!templates/loginTemplate.html'
-], function($, BaseView, Session,  loginTemplate){
+define(function(require, exports, module) {
+
+  	"use strict";
+
+  	var Session = require("session");
+  	var BaseView = require("BaseView");
+  	var loginTemplate = require("text!templates/loginTemplate.html");
 
 	var LoginView = BaseView.extend({
 
 		template : _.template(loginTemplate),
-		
+
 		events : {
 			'click button' : 'submit'
 		},
@@ -29,6 +30,6 @@ define([
 		}
 	});
 
-	return LoginView;
+	module.exports = LoginView;
 
 });

@@ -1,14 +1,14 @@
-define([
-	'jquery',
-	'underscore',
-	'backbone',
-	'core/BaseRouter',
-	'views/HomeView',
-	'views/LoginView',
-	'views/ProfileView',
-	'models/UserModel',
-	'Session'
-], function($, _,  Backbone, BaseRouter, HomeView, LoginView, ProfileView, UserModel, Session){
+define(function(require, exports, module) {
+
+  	"use strict";
+
+  	var Session = require("session");
+  	var BaseRouter = require("./core/BaseRouter");
+  	var HomeView = require("./views/HomeView");
+  	var LoginView = require("./views/LoginView");
+  	var ProfileView = require("./views/ProfileView");
+  	var UserModel = require("./models/UserModel");
+
 
 	var Router = BaseRouter.extend({
 
@@ -28,7 +28,7 @@ define([
 
 		before : function(params, next){
 			//Checking if user is authenticated or not
-			//then check the path if the path requires authentication 
+			//then check the path if the path requires authentication
 			var isAuth = Session.get('authenticated');
 			var path = Backbone.history.location.hash;
 			var needAuth = _.contains(this.requresAuth, path);
@@ -47,7 +47,7 @@ define([
 			}else{
 				//No problem handle the route
 				return next();
-			}			
+			}
 		},
 
 		after : function(){
@@ -55,15 +55,16 @@ define([
 		},
 
 		changeView : function(view){
+			var self = this;
 			//Close is a method in BaseView
-			//that check for childViews and 
-			//close them before closing the 
+			//that check for childViews and
+			//close them before closing the
 			//parentView
 			function setView(view){
-				if(this.currentView){
-					this.currentView.close();
+				if(self.currentView){
+					self.currentView.close();
 				}
-				this.currentView = view;
+				self.currentView = view;
 				$('.container').html(view.render().$el);
 			}
 
@@ -111,5 +112,5 @@ define([
 		}
 	});
 
-	return Router;
+	module.exports = Router;
 });

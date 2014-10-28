@@ -1,6 +1,6 @@
-define([
-	'backbone',
-], function(Backbone){
+define(function(require, exports, module) {
+
+  	"use strict";
 
 	var UserModel = Backbone.Model.extend({
 
@@ -16,5 +16,5 @@ define([
 		urlRoot : '/users'
 	});
 
-	return UserModel;
+	module.exports = UserModel;
 });

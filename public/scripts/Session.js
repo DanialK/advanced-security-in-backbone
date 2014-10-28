@@ -1,11 +1,9 @@
-define([
-	'jquery',
-	'backbone',
-	'router'
-], function($, Backbone, Router){
+define(function(require, exports, module) {
+
+  "use strict";
 
 	var SessionModel = Backbone.Model.extend({
-		
+
 		url : '/session',
 
 		initialize : function(){
@@ -52,12 +50,12 @@ define([
 			}else{
 				Backbone.Model.prototype.unset.call(this, key);
 			}
-			return this;	
+			return this;
 		},
 
 		clear : function(){
 			if(this.supportStorage){
-				sessionStorage.clear();  
+				sessionStorage.clear();
 			}else{
 				Backbone.Model.prototype.clear(this);
 			}
@@ -95,7 +93,7 @@ define([
 				//Clear all session data
 				that.clear();
 				//Set the new csrf token to csrf vaiable and
-				//call initialize to update the $.ajaxSetup 
+				//call initialize to update the $.ajaxSetup
 				// with new csrf
 				csrf = response.csrf;
 				that.initialize();
@@ -124,5 +122,6 @@ define([
 		}
 	});
 
-	return new SessionModel();	
+
+	module.exports = new SessionModel();
 });
