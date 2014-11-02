@@ -8,12 +8,13 @@ define(function(require, exports, module) {
   	var LoginView = require("./views/LoginView");
   	var ProfileView = require("./views/ProfileView");
   	var UserModel = require("./models/UserModel");
-
+  	var startView = require("./views/startView");
 
 	var Router = BaseRouter.extend({
 
 		routes : {
 			'login' : 'showLogin',
+			'start': 'showStartPage',
 			'profile' : 'showProfile',
 			'*default' : 'showHome'
 		},
@@ -92,6 +93,11 @@ define(function(require, exports, module) {
 					//In case that session expired
 					that.fetchError(error);
 				});
+		},
+
+		showStartPage: function() {
+			var startViewInstance = new startView();
+			this.changeView(startViewInstance);
 		},
 
 		showHome : function(){
