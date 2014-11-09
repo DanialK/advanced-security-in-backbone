@@ -9,10 +9,16 @@ define(function(require, exports, module) {
   	var ProfileView = require("./views/ProfileView");
   	var UserModel = require("./models/UserModel");
   	var startView = require("./views/startView");
+  	var Business = {
+  		Views: {
+  			List: require("./views/businessListView")
+  		}
+  	};
 
 	var Router = BaseRouter.extend({
 
 		routes : {
+			'bussinesses': 'showAllBusiness',
 			'login' : 'showLogin',
 			'start': 'showStartPage',
 			'profile' : 'showProfile',
@@ -39,20 +45,46 @@ define(function(require, exports, module) {
 				//If user gets redirect to login because wanted to access
 				// to a route that requires login, save the path in session
 				// to redirect the user back to path after successful login
+				this.setUserAuthenticate();
 				Session.set('redirectFrom', path);
 				Backbone.history.navigate('login', { trigger : true });
 			}else if(isAuth && cancleAccess){
 				//User is authenticated and tries to go to login, register ...
 				// so redirect the user to home page
+				this.setUserAuthenticate();
 				Backbone.history.navigate('', { trigger : true });
 			}else{
+				this.setUserAuthenticate();
 				//No problem handle the route
 				return next();
 			}
 		},
 
+		setUserAuthenticate: function() {
+			var that = this;
+			if (!Session || !Session.get('user') || !Session.get('user').id) {
+				$('ul.login-nav-bar').html('<li><a href="#login">Login</a></li>');
+				return;
+			}
+			var userModel = new UserModel({
+				id : Session.get('user').id
+			});
+			userModel.fetch()
+				.done(function(){
+					$('ul.login-nav-bar').html('<li><a href="#">'+ userModel.get("firstName") +' ' + userModel.get("lastName") +'</li>');
+				})
+				.fail(function(error){
+					$('ul.login-nav-bar').html('<li><a href="#login">Login</a></li>');
+				});
+		},
+
 		after : function(){
 			//empty
+		},
+
+		showAllBusiness: function() {
+			var View = new Business.Views.List();
+			this.changeView(View);
 		},
 
 		changeView : function(view){
@@ -66,7 +98,7 @@ define(function(require, exports, module) {
 					self.currentView.close();
 				}
 				self.currentView = view;
-				$('.container').html(view.render().$el);
+				$('.main-view').html(view.render().$el);
 			}
 
 			setView(view);

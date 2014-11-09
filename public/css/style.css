@@ -28,6 +28,7 @@ h6 {
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 700;
+    color: rgb(32, 181, 204);
 }
 
 hr.star-light,
@@ -436,4 +437,21 @@ footer .footer-below {
     -webkit-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
+}
+.navbar-inverse {
+    background-color: rgb(32, 197, 195);
+    border-color: rgb(32, 197, 195);
+}
+.navbar-inverse .navbar-brand {
+    color: #fff;
+}
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus {
+    color: #fff;
+    background-color: rgb(32, 181, 204);
+}
+.navbar-inverse .navbar-nav>li>a {
+    color: #fff;
+}
+.navbar-fixed-top{
+    padding: 20px 0px;
 }
