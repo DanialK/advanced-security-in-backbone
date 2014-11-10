@@ -20,10 +20,13 @@ define(function(require, exports, module) {
 		routes : {
 			'bussinesses': 'showAllBusiness',
 			'login' : 'showLogin',
-			'start': 'showStartPage',
 			'profile' : 'showProfile',
-			'*default' : 'showHome'
+			'home' : 'showHome',
+			'*default' : 'showStartPage',
+
 		},
+
+		userModel: null,
 
 		// Routes that need authentication and if user is not authenticated
 		// gets redirect to login page
@@ -61,21 +64,25 @@ define(function(require, exports, module) {
 		},
 
 		setUserAuthenticate: function() {
-			var that = this;
-			if (!Session || !Session.get('user') || !Session.get('user').id) {
+			var self = this;
+			var isAuth = Session.get('authenticated');
+			if (!isAuth) {
 				$('ul.login-nav-bar').html('<li><a href="#login">Login</a></li>');
 				return;
 			}
-			var userModel = new UserModel({
-				id : Session.get('user').id
-			});
-			userModel.fetch()
-				.done(function(){
-					$('ul.login-nav-bar').html('<li><a href="#">'+ userModel.get("firstName") +' ' + userModel.get("lastName") +'</li>');
-				})
-				.fail(function(error){
-					$('ul.login-nav-bar').html('<li><a href="#login">Login</a></li>');
+			if (!self.userModel){
+				self.userModel = new UserModel({
+					id : Session.get('user').id
 				});
+				self.userModel.fetch()
+					.done(function(){
+						var user = self.userModel.toJSON();
+						$('ul.login-nav-bar').html('<li><a href="#/profile">'+ user.firstName +' ' + user.lastName +'</li>');
+					})
+					.fail(function(error){
+						$('ul.login-nav-bar').html('<li><a href="#/login">Login</a></li>');
+					});
+			}
 		},
 
 		after : function(){
@@ -89,6 +96,7 @@ define(function(require, exports, module) {
 
 		changeView : function(view){
 			var self = this;
+			self.setUserAuthenticate();
 			//Close is a method in BaseView
 			//that check for childViews and
 			//close them before closing the
@@ -98,6 +106,7 @@ define(function(require, exports, module) {
 					self.currentView.close();
 				}
 				self.currentView = view;
+				$('.first-view').hide();
 				$('.main-view').html(view.render().$el);
 			}
 
@@ -110,21 +119,25 @@ define(function(require, exports, module) {
 		},
 
 		showProfile : function(){
-			var that = this;
-			var userModel = new UserModel({
-				id : Session.get('user').id
-			});
-			userModel.fetch()
+			var self = this;
+			if (!self.userModel) {
+				// self.userModel = new UserModel({
+				// 	id : Session.get('user').id
+				// });
+				self.navigate('#/login')
+			} else {
+				self.userModel.fetch()
 				.done(function(){
 					var profileView = new ProfileView({
-						model : userModel
+						model : self.userModel
 					});
-					that.changeView(profileView);
+					self.changeView(profileView);
 				})
 				.fail(function(error){
 					//In case that session expired
-					that.fetchError(error);
+					self.fetchError(error);
 				});
+			}
 		},
 
 		showStartPage: function() {

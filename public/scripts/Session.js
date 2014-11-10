@@ -76,7 +76,7 @@ define(function(require, exports, module) {
 					that.unset('redirectFrom');
 					Backbone.history.navigate(path, { trigger : true });
 				}else{
-					Backbone.history.navigate('', { trigger : true });
+					Backbone.history.navigate('profile', { trigger : true });
 				}
 			});
 			login.fail(function(){
