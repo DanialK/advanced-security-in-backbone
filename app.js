@@ -34,6 +34,7 @@ app.use(function(req, res, next){
 });
 
 app.use(express.static(process.env.PWD + '/public'));
+console.log(process.env.PWD + '/public');
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
