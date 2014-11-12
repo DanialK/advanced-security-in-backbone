@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+process.env.PWD = process.cwd();
 
 var express = require('express');
 var http = require('http');
@@ -31,7 +32,8 @@ app.use(function(req, res, next){
 	res.setHeader('X-CSRF-Token', req.session._csrf);
 	next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static(process.env.PWD + '/public'));
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
