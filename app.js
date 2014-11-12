@@ -2,7 +2,7 @@
 /**
  * Module dependencies.
  */
-process.env.PWD = process.cwd();
+
 
 var express = require('express');
 var http = require('http');
@@ -33,8 +33,11 @@ app.use(function(req, res, next){
 	next();
 });
 
-app.use(express.static(process.env.PWD + '/public'));
+process.env.PWD = process.cwd();
+// app.use(express.static(process.env.PWD + '/public'));
+app.use(express.static(__dirname + '/public'));
 console.log(process.env.PWD + '/public');
+console.log(__dirname + '/public');
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
