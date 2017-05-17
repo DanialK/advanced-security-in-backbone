@@ -1,8 +1,6 @@
-define([
-	'underscore',
-	'backbone'
-], function(_, Backbone){
+define(function(require, exports, module) {
 
+  	"use strict";
 	var BaseView = Backbone.View.extend({
 		close : function(){
 			if(this.childViews){
@@ -12,6 +10,6 @@ define([
 		}
 	});
 
-	return BaseView;
+	module.exports = BaseView;
 
 });

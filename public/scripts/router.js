@@ -1,22 +1,32 @@
-define([
-	'jquery',
-	'underscore',
-	'backbone',
-	'core/BaseRouter',
-	'views/HomeView',
-	'views/LoginView',
-	'views/ProfileView',
-	'models/UserModel',
-	'Session'
-], function($, _,  Backbone, BaseRouter, HomeView, LoginView, ProfileView, UserModel, Session){
+define(function(require, exports, module) {
+
+  	"use strict";
+
+  	var Session = require("session");
+  	var BaseRouter = require("./core/BaseRouter");
+  	var HomeView = require("./views/HomeView");
+  	var LoginView = require("./views/LoginView");
+  	var ProfileView = require("./views/ProfileView");
+  	var UserModel = require("./models/UserModel");
+  	var startView = require("./views/startView");
+  	var Business = {
+  		Views: {
+  			List: require("./views/businessListView")
+  		}
+  	};
 
 	var Router = BaseRouter.extend({
 
 		routes : {
+			'bussinesses': 'showAllBusiness',
 			'login' : 'showLogin',
 			'profile' : 'showProfile',
-			'*default' : 'showHome'
+			'home' : 'showHome',
+			'*default' : 'showStartPage',
+
 		},
+
+		userModel: null,
 
 		// Routes that need authentication and if user is not authenticated
 		// gets redirect to login page
@@ -28,7 +38,7 @@ define([
 
 		before : function(params, next){
 			//Checking if user is authenticated or not
-			//then check the path if the path requires authentication 
+			//then check the path if the path requires authentication
 			var isAuth = Session.get('authenticated');
 			var path = Backbone.history.location.hash;
 			var needAuth = _.contains(this.requresAuth, path);
@@ -38,33 +48,66 @@ define([
 				//If user gets redirect to login because wanted to access
 				// to a route that requires login, save the path in session
 				// to redirect the user back to path after successful login
+				this.setUserAuthenticate();
 				Session.set('redirectFrom', path);
 				Backbone.history.navigate('login', { trigger : true });
 			}else if(isAuth && cancleAccess){
 				//User is authenticated and tries to go to login, register ...
 				// so redirect the user to home page
+				this.setUserAuthenticate();
 				Backbone.history.navigate('', { trigger : true });
 			}else{
+				this.setUserAuthenticate();
 				//No problem handle the route
 				return next();
-			}			
+			}
+		},
+
+		setUserAuthenticate: function() {
+			var self = this;
+			var isAuth = Session.get('authenticated');
+			if (!isAuth) {
+				$('ul.login-nav-bar').html('<li><a href="#login">Login</a></li>');
+				return;
+			}
+			if (!self.userModel){
+				self.userModel = new UserModel({
+					id : Session.get('user').id
+				});
+				self.userModel.fetch()
+					.done(function(){
+						var user = self.userModel.toJSON();
+						$('ul.login-nav-bar').html('<li><a href="#/profile">'+ user.firstName +' ' + user.lastName +'</li>');
+					})
+					.fail(function(error){
+						$('ul.login-nav-bar').html('<li><a href="#/login">Login</a></li>');
+					});
+			}
 		},
 
 		after : function(){
 			//empty
 		},
 
+		showAllBusiness: function() {
+			var View = new Business.Views.List();
+			this.changeView(View);
+		},
+
 		changeView : function(view){
+			var self = this;
+			self.setUserAuthenticate();
 			//Close is a method in BaseView
-			//that check for childViews and 
-			//close them before closing the 
+			//that check for childViews and
+			//close them before closing the
 			//parentView
 			function setView(view){
-				if(this.currentView){
-					this.currentView.close();
+				if(self.currentView){
+					self.currentView.close();
 				}
-				this.currentView = view;
-				$('.container').html(view.render().$el);
+				self.currentView = view;
+				$('.first-view').hide();
+				$('.main-view').html(view.render().$el);
 			}
 
 			setView(view);
@@ -76,21 +119,30 @@ define([
 		},
 
 		showProfile : function(){
-			var that = this;
-			var userModel = new UserModel({
-				id : Session.get('user').id
-			});
-			userModel.fetch()
+			var self = this;
+			if (!self.userModel) {
+				// self.userModel = new UserModel({
+				// 	id : Session.get('user').id
+				// });
+				self.navigate('#/login')
+			} else {
+				self.userModel.fetch()
 				.done(function(){
 					var profileView = new ProfileView({
-						model : userModel
+						model : self.userModel
 					});
-					that.changeView(profileView);
+					self.changeView(profileView);
 				})
 				.fail(function(error){
 					//In case that session expired
-					that.fetchError(error);
+					self.fetchError(error);
 				});
+			}
+		},
+
+		showStartPage: function() {
+			var startViewInstance = new startView();
+			this.changeView(startViewInstance);
 		},
 
 		showHome : function(){
@@ -111,5 +163,5 @@ define([
 		}
 	});
 
-	return Router;
+	module.exports = Router;
 });

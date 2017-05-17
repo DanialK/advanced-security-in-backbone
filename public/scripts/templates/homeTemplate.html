@@ -1,16 +1,30 @@
-<div class="hero-unit">
-	<h1>Home Page</h1>
-	<% if(user){
-		%>
-			<h4>Hello <%= user.firstName %> <%= user.lastName %> </h4>
-
-			<a href="#profile">Profile</a>
-			<br>
-			<a class="logout">Log out</a>
-		<%
-	}else{
-		%>
-			<a href="#login">Log In</a>
-		<%
-	}%>
+<div class="row">
+    <div class="col-md-3">
+    <% if(user) { %>
+		<div class="list-group" style="margin-top: 25px;margin-left: 15px;">
+            <a href="#" class="list-group-item active">Home</a>
+            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+            <a href="#" class="list-group-item">Morbi leo risus</a>
+            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+            <a href="#profile" class="list-group-item">Profile</a>
+            <a href="#" class="list-group-item logout">Logout</a>
+    	</div>
+	<% } else { %>
+		<div class="list-group" style="margin-top: 25px;margin-left: 15px;">
+            <a href="#" class="list-group-item active">Home</a>
+            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+            <a href="#" class="list-group-item">Morbi leo risus</a>
+            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+            <a href="#profile" class="list-group-item">Profile</a>
+            <a href="#login" class="list-group-item logout">Login</a>
+    	</div>
+	<% } %>
+    </div>
+    <div class="col-md-6">
+    	<% if (user) { %>
+    		<h4>Home, Hello <%= user.firstName %> <%= user.lastName %> </h4>
+    	<% } else { %>
+    		<h1>Home Page</h1>
+    	<%	} %>
+    </div>
 </div>

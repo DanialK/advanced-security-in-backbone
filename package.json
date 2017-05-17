@@ -5,10 +5,13 @@
   "scripts": {
     "start": "nodemon app.js"
   },
+  "engines": {
+    "node": "0.10.25"
+  },
   "dependencies": {
-    "express": "3.3.2",
-    "jade": "^1.1.5",
+    "express": "4.0.0",
     "nodemon": "~0.7.8",
-    "uid2": "0.0.3"
+    "uid2": "0.0.3",
+    "ejs": "~2.5.5"
   }
 }

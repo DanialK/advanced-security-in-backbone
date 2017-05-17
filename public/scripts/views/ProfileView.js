@@ -1,8 +1,10 @@
-define([
-	'core/BaseView',
-	'Session',
-	'text!templates/profileTemplate.html'
-], function(BaseView, Session, profileTemplate){
+define(function(require, exports, module) {
+
+  	"use strict";
+
+  	var Session = require("session");
+  	var BaseView = require("BaseView");
+  	var profileTemplate = require("text!templates/profileTemplate.html");
 
 	var ProfileView = BaseView.extend({
 
@@ -24,6 +26,6 @@ define([
 		}
 	});
 
-	return ProfileView;
+	module.exports = ProfileView;
 
 });

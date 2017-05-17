@@ -3,23 +3,26 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , http = require('http')
-  , path = require('path')
-  , uid = require('uid2');
+
+var express = require('express');
+var http = require('http');
+var path = require('path');
+var uid = require('uid2');
 
 var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.cookieParser('NOTHING'));
 app.use(express.session());
-// This middleware adds _csrf to 
+// This middleware adds _csrf to
 // our session
 // req.session._csrf
 app.use(express.csrf());
@@ -29,7 +32,12 @@ app.use(function(req, res, next){
 	res.setHeader('X-CSRF-Token', req.session._csrf);
 	next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
+
+process.env.PWD = process.cwd();
+// app.use(express.static(process.env.PWD + '/public'));
+app.use(express.static(__dirname + '/public'));
+console.log(process.env.PWD + '/public');
+console.log(__dirname + '/public');
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -38,7 +46,7 @@ if ('development' == app.get('env')) {
 
 /* ------------------------------------------------
 	Application Routes
-   ------------------------------------------------*/ 
+   ------------------------------------------------*/
 
 app.get("/", function(req, res){
 	//send and csrf token with frist request
@@ -49,7 +57,7 @@ app.get("/", function(req, res){
 	});
 });
 
-app.get("/session", function(req, res){ 
+app.get("/session", function(req, res){
 	//Check for authentication
 	if(req.session.user){
 		res.send(200, {
@@ -64,7 +72,7 @@ app.get("/session", function(req, res){
 	}
 });
 
-app.post("/session/login", function(req, res){ 
+app.post("/session/login", function(req, res){
 	var email = req.body.email;
 	var password = req.body.password;
 	for (var i = 0; i < Users.length; i++) {
@@ -81,7 +89,7 @@ app.post("/session/login", function(req, res){
 });
 
 
-app.del("/session/logout", function(req, res){ 
+app.del("/session/logout", function(req, res){
 	//Sending new csrf to client when user logged out
 	//for next user to sign in without refreshing the page
 	req.session.user = null;
@@ -108,7 +116,7 @@ app.get('/users/:id', Auth, function(req, res){
 
 /* ------------------------------------------------
 	Route Filters
-   ------------------------------------------------*/ 
+   ------------------------------------------------*/
 
 //Authentication Filter
 function Auth (req, res, next) {
@@ -116,7 +124,7 @@ function Auth (req, res, next) {
 		next();
 	}else{
 		res.send(401,{
-			flash : 'Plase log in first'
+			flash : 'Please log in first'
 		});
 	}
 }
@@ -124,7 +132,7 @@ function Auth (req, res, next) {
 
 /* ------------------------------------------------
 	Dummy Database
-   ------------------------------------------------*/ 
+   ------------------------------------------------*/
 
 var Users = [
 	{

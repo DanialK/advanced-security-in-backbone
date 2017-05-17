@@ -1,11 +1,9 @@
-define([
-	'jquery',
-	'backbone',
-	'router',
-	'Session'
-], function($, Backbone, Router, Session){
+define(function(require, exports, module) {
+  "use strict";
+  var Session = require("session");
+  var Router = require("router");
 
-	var ApplicationModel = Backbone.Model.extend({
+  var ApplicationModel = Backbone.Model.extend({
 
 		start : function(){
 			Session.getAuth(function(response){
@@ -14,5 +12,7 @@ define([
 			});
 		}
 	});
-	return ApplicationModel;
+
+  	module.exports = ApplicationModel;
+
 });
